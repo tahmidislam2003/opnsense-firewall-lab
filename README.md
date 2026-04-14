@@ -8,12 +8,30 @@ Network segmentation firewall isolating a 10.0.0.0/24 lab network from the home 
 
 ```mermaid
 graph LR
-    A[Home Network<br/>192.168.86.0/24] -->|WAN| B[OPNsense<br/>WAN: 192.168.86.37<br/>LAN: 10.0.0.1]
-    B -->|LAN vmbr1| C[Lab Network<br/>10.0.0.0/24]
-    C --> D[Wazuh VM<br/>10.0.0.10]
-    C --> E[Linux Agent VM<br/>10.0.0.30]
-    C --> F[Windows 11 VM<br/>10.0.0.20]
-    B -.->|Blocked| A
+    Internet((Internet))
+
+    subgraph home["vmbr0 — Home Network (192.168.86.0/24)"]
+        Router[Home Router<br/>192.168.86.1]
+    end
+
+    subgraph fw["OPNsense Firewall"]
+        WAN[WAN interface<br/>192.168.86.37]
+        LAN[LAN interface<br/>10.0.0.1]
+    end
+
+    subgraph lab["vmbr1 — Lab Network (10.0.0.0/24)"]
+        Wazuh[Wazuh VM<br/>10.0.0.10]
+        Linux[Linux Agent<br/>10.0.0.30]
+        Win[Windows 11<br/>10.0.0.20]
+    end
+
+    Internet <--> Router
+    Router <--> WAN
+    WAN --- LAN
+    LAN --> Wazuh
+    LAN --> Linux
+    LAN --> Win
+    lab -. "BLOCKED by firewall rule" .-> Router
 ```
 
 ---
