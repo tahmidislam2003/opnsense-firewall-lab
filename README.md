@@ -31,7 +31,7 @@ graph LR
     LAN --> Wazuh
     LAN --> Linux
     LAN --> Win
-    lab -. "BLOCKED by firewall rule" .-> Router
+    LAN -. "BLOCKED by firewall rule" .-> Router
 ```
 
 ---
